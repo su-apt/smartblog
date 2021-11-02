@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Article;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Notifications\followuser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
 
 class usersController extends Controller
@@ -74,11 +76,17 @@ class usersController extends Controller
     {
 
         $usertofollow = User::where('username', '=' , $username)->first();
+
        $user = Auth::user()->id;
+
        $userid = User::find($user);
+       $user = User::find($user)->first();
+
+
         switch ($request->get('follow')) {
             case "follow":
                 $userid->following()->attach($usertofollow->id);
+                Notification::send($user , new followuser($usertofollow));
                 //response {"status":true}
                 break;
             case "unfollow":

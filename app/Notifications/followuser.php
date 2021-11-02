@@ -2,8 +2,10 @@
 
 namespace App\Notifications;
 
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -11,16 +13,16 @@ class followuser extends Notification
 {
     use Queueable;
 
-    private $newfollower;
+    private $uesr;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($newfollower)
+    public function __construct($user)
     {
-        $this->newfollower = $newfollower;
+        $this->user = $user;
     }
 
     /**
@@ -31,7 +33,7 @@ class followuser extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -57,7 +59,8 @@ class followuser extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'user' => $this->user->username
         ];
     }
+
 }
