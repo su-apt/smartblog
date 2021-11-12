@@ -11,11 +11,6 @@ use PhpParser\Builder\Use_;
 class PageController extends Controller
 {
 
-  public function __construct()
-   {
-
-
-  }
 
     public function timeline()
     {
@@ -29,7 +24,6 @@ class PageController extends Controller
         $get_following_ids = $user_id->following->pluck('id');
         $following_articles = Article::orderBy('created_at', 'DESC')->whereIn('user_id' , $get_following_ids)->get();
 
-     //  dd($following_articles);
         return view('timeline.timeline' ,compact('following_articles' , 'user_id' , 'get_following_ids'));
 
 

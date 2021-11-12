@@ -51,5 +51,12 @@ class Article extends Model
 
     }
 
+    public function like()
+    {
+
+        $this->belongsTo(LikeArticles::class, 'article_id');
+
+    }
+
 
 }

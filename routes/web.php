@@ -10,6 +10,9 @@ Route::get('/' , 'HomeController@index')->name('index');
 
 Route::get('/blog', 'PageController@index')->name('blog');
 Route::get('/timeline', 'PageController@timeline')->name('timeline');
+Route::post('/mark-as-read', 'usersController@markNotification')->name('markNotification');
+Route::post('/likes', 'usersController@likes')->name('likes');
+
 Route::get('contact', 'PageController@contact');
 
 Route::post('contact', 'PageController@Contactstore');
@@ -35,6 +38,7 @@ echo "this is the id ". $id. "and email is ". $email ."and name is : ".$name;
 });
 
 Auth::routes();
+
 Route::resource('articles', 'ArticleController');
 
 Route::any('/{name}', 'usersController@index')->name('userProfile');

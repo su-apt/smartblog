@@ -66,4 +66,11 @@ class User extends Authenticatable
         ->select('id', 'username', 'name');
     }
 
+    public function like()
+    {
+
+        return $this->belongsToMany(Article::class , 'like_articles' ,'user_id', 'article_id');
+
+    }
+
 }

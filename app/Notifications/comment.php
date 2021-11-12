@@ -2,27 +2,26 @@
 
 namespace App\Notifications;
 
-use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 
-class followuser extends Notification
+class comment extends Notification
 {
     use Queueable;
 
-    private $uesr;
-
+    private $comment , $article;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($comment , $article)
     {
-        $this->user = $user;
+        $this->comment = $comment;
+        $this->article = $article;
     }
 
     /**
@@ -59,10 +58,9 @@ class followuser extends Notification
     public function toArray($notifiable)
     {
         return [
-            'user_id' => $this->user->id ,
-            'name' => $this->user->name ,
-            'username' => $this->user->username
+            'username' => Auth::user()->username ,
+            'comment' => $this->comment->content,
+            'slug' => $this->article->slug
         ];
     }
-
 }

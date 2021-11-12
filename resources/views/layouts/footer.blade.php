@@ -14,7 +14,64 @@
     </ul>
   </footer>
 </div>
+
     <script src="https://getbootstrap.com/docs/5.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
+@if(Auth::check())
+    <script>
+    function sendMarkRequest(id = null) {
+        return $.ajax("{{ route('markNotification') }}", {
+            method: 'POST',
+            data: {
+               "_token": "{{ csrf_token() }}",
+               " id" : id
+            }
+        });
+    }
+    $(function() {
+        $('.mark-as-read').click(function() {
+            let request = sendMarkRequest($(this).data('id'));
+            request.done(() => {
+                $(this).parents('li.ps-container').remove();
+                 $("#mark-all").html("accepted");
+            });
+        });
+        $('#mark-all').click(function() {
+            let request = sendMarkRequest();
+            request.done(() => {
+                $('li.ps-container').remove();
+            })
+        });
+    });
+
+    function like(id = null) {
+        return $.ajax("{{ route('likes') }}", {
+            method: 'POST',
+            data: {
+               "_token": "{{ csrf_token() }}",
+               " id" : id
+            }
+        });
+    }
+     $(document).on('click', '#unlike', function() {
+            var id = ($(this).data("id"));
+            let request = like($(this).data('id'));
+            request.done(() => {
+               $('#like-'+id+'').removeClass("fas fa-heart").addClass("far fa-heart");
+               $('#likebutton'+id+'').load(window.location.href + ' #content'+id+' > *');
+            });
+        });
+    $(function() {
+        $(document).on('click', '.like', function(){
+            var id = ($(this).data("id"));
+            let request = like($(this).data('id'));
+            request.done(() => {
+                $('#like-'+id+'').removeClass("far fa-heart").addClass("fas fa-heart");
+                $('#likebutton'+id+'').load(window.location.href + ' #content'+id+' > *');
+            });
+        });
+    });
+    </script>
+    @endif
 </body>
 </html>

@@ -6,9 +6,11 @@ use App\User;
 use App\Article;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Notifications\followuser;
+use App\Notifications\likes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
+use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 
 class usersController extends Controller
 {
@@ -75,18 +77,13 @@ class usersController extends Controller
     public function followunfollow(Request $request , $username)
     {
 
-        $usertofollow = User::where('username', '=' , $username)->first();
-
+       $usertofollow = User::where('username', '=' , $username)->first();
        $user = Auth::user()->id;
-
        $userid = User::find($user);
-       $user = User::find($user)->first();
-
-
         switch ($request->get('follow')) {
             case "follow":
                 $userid->following()->attach($usertofollow->id);
-                Notification::send($user , new followuser($usertofollow));
+                Notification::send($usertofollow , new followuser($userid));
                 //response {"status":true}
                 break;
             case "unfollow":
@@ -97,6 +94,53 @@ class usersController extends Controller
                 //response {"status":false, "error" : ['wrong act']}
         }
         return redirect()->back();
+    }
+
+
+    public function markNotification(Request $request)
+    {
+
+
+        auth()->user()
+            ->unreadNotifications
+            ->when($request->input('id'), function ($query) use ($request) {
+                return $query->where('id', $request->input('id'));
+            })
+            ->markAsRead();
+
+        return response()->noContent();
+
+    }
+
+    public function likes(Request $request)
+    {
+
+
+        $authUser = Auth::user()->id;
+
+        $articleuserLiked = User::find($authUser)->like()->pluck('article_id')->toArray(); // get articles that users have liked
+
+        $Article = Article::all()->pluck('id')->toArray();
+
+       if(!in_array($request->input('id') , $Article )){ // this will refuse any number that dose not exist in Articles id colmun
+
+            return abort('401');
+
+        }
+        if(in_array($request->input('id') , $articleuserLiked)){ // if there is an article user has liked this will detach like
+
+            $userArticle = Article::where('id', $request->input('id'))->first();
+            User::find($authUser)->like()->detach($userArticle);
+            return response()->noContent();
+        }else{
+
+        $userArticle = Article::where('id', $request->input('id'))->first();
+        $findAuthUser = User::find($authUser)->first();
+         User::find($authUser)->like()->attach($userArticle);
+         Notification::send($userArticle->user , new likes($userArticle));
+
+        return response()->noContent();
+        }
     }
 
     /**

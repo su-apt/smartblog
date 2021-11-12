@@ -190,6 +190,8 @@ class ArticleController extends Controller
     {
         $articleSlug = Article::where('slug', $slug)->pluck('slug')->first();
         $article = Article::where('slug', $slug)->first();
+        $image_path = public_path('images').'/' . $article->image_path;
+       // dd($image_path);
         if ($slug != $articleSlug) {
             return abort('404');
         } elseif (Auth::id() != $article->user_id){
@@ -197,7 +199,15 @@ class ArticleController extends Controller
             return abort('401');
         }
 
+        if(file_exists($image_path))
+        {
+        unlink($image_path);
+        }else{
+            return redirect()->back();
+        }
+
         $article->delete();
+
 
         return redirect()->back();
     }
