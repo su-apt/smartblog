@@ -29,7 +29,7 @@
                             <div class="card-footer">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <small class="text-muted">{{ substr($article->updated_at, 0, 10) }}</small>
-                                    @dd($article->likes)
+                               
                                     @include('button.likes')
                                 </div>
 
