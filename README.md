@@ -6,6 +6,9 @@
 
 ## SmartBlog
 
+-pagefor user can update or edit data 
+avatar or email or user name .. etc
 
+- time line page with relation between users on database
 -follow and unfollow system
 -like system
